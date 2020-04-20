@@ -34,7 +34,13 @@ app.get('/api/villagers/:name', (req, res) => {
   fetch(url, API_OPTIONS)
     .then((res) => res.json())
     .then((json) => {
+      if (json.hasOwnProperty('error')) { throw new Error(json.error) }
+
       res.status(200).send(json);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(err);
     });
 });
 
