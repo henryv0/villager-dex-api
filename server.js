@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const fetch = require('node-fetch');
 const redis = require('redis');
+const convertSentenceCase = require('./helpers/sentenceCase');
 
 const client = redis.createClient();
 dotenv.config();
@@ -28,6 +29,8 @@ const fetchNameFromCache = (req, res, next) => {
     }
 
     if (data !== null) {
+      console.log('fetching data from cache');
+
       res.json({
         source: 'cache',
         data: JSON.parse(data),
@@ -49,7 +52,7 @@ app.get('/api', (req, res) => {
 });
 
 app.get('/api/villagers/:name', fetchNameFromCache, (req, res) => {
-  let { name } = req.params;
+  let name = convertSentenceCase(req.params.name);
   let url = `${BASE_URL}/${name}/`;
 
   console.log('fetching from 3rd party API');
